@@ -1,7 +1,6 @@
 # -*- train_rnn.py -*-
 import argparse
 import random
-from numba import jit, cuda
 
 import torch
 import torch.nn as nn
@@ -59,8 +58,7 @@ def save_checkpoint(net, optimizer, cpt_name):
         },
         'checkpoints/{}.cpt'.format(cpt_name)
     )
-
-@jit(target ="cuda")                        
+                      
 def main():
     args = get_args()
     debug_args(args)
