@@ -11,7 +11,7 @@ source activate dl
 python preprocess.py \
     --num_workers 10 \
     --name cmu_arctic \
-    --in_dir A:\\Projects\\ATSP\\InputData \
-    --out_dir A:\\Projects\\ATSP\\OutputData
+    --in_dir /content/drive/MyDrive/ATSP \
+    --out_dir /content/drive/MyDrive/ATSP_output
 
 

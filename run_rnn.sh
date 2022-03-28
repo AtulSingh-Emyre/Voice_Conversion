@@ -13,7 +13,7 @@ source activate dl
 python train_rnn.py \
     --ssp bdl \
     --tsp slt \
-    --data_root  A:\\Projects\\ATSP\\OutputData \
+    --data_root  /content/drive/MyDrive/ATSP_output \
     --epochs 30 \
     --dual True \
 
