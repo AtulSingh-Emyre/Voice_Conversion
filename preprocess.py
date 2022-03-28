@@ -8,9 +8,13 @@ import numpy as np
 
 
 def preprocess(mod, in_dir, out_dir, num_workers):
+    print(in_dir)
+    print(out_dir)
     os.makedirs(out_dir, exist_ok=True)
+    print('check 0')
     metadata = mod.build_from_path(in_dir, out_dir, num_workers, tqdm=tqdm)
     lf0s = {}
+    print("check")
     for m in metadata:
         if m[3] not in lf0s:
             lf0s[m[3]] = m[4]

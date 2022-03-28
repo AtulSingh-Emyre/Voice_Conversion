@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- cmu_arctic.py -*-
 
 from concurrent.futures import ProcessPoolExecutor
 from functools import partial
@@ -39,10 +39,12 @@ def _process_utterance(out_dir, index, speaker_id, wav_path, text):
     spectrogram = trim_zeros_frames(spectrogram)
     mc = pysptk.sp2mc(spectrogram, order=config.order, alpha=config.alpha)
     timesteps = mc.shape[0]
-    wav_id = wav_path.split("/")[-1].split('.')[0]
-    mc_name = '{}-mc.npy'.format(wav_id)
-    np.save(os.path.join(out_dir, mc_name), mc, allow_pickle=False)
-
+    folder_id = wav_path.split("\\")[-3]
+#    path=os.path.join("/home/lalaram-arya/voice-conversion-master/Features",folder_id)
+#    os.mkdir(path)
+    wav_id = wav_path.split("\\")[-1].split('.')[0]
+    mc_name = '{}{}{}-mc.npy'.format(folder_id,'_',wav_id)
+    np.save(os.path.join(out_dir, folder_id, mc_name), mc, allow_pickle=False)
     # compute lf0
     lf0 = f0.copy()
     nonzero_indices = np.nonzero(f0)

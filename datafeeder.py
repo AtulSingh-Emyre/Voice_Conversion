@@ -26,10 +26,8 @@ class McepDataSet(Dataset):
 
     def __getitem__(self, idx):
         wav_id = self.wav_ids[idx]
-
-        source_path = os.path.join(self.data_root, "cmu_us_arctic_{0}_{1}-mc.npy".format(self.ssp, wav_id))
-        target_path = os.path.join(self.data_root, "cmu_us_arctic_{0}_{1}-mc.npy".format(self.tsp, wav_id))
-
+        source_path = os.path.join(self.data_root, "cmu_us_{0}_arctic".format(self.ssp),"cmu_us_{0}_arctic_arctic_{1}-mc.npy".format(self.ssp, wav_id))
+        target_path = os.path.join(self.data_root, "cmu_us_{0}_arctic".format(self.tsp),"cmu_us_{0}_arctic_arctic_{1}-mc.npy".format(self.tsp, wav_id))
         source_data = np.load(source_path)
         target_data = np.load(target_path)
         return source_data, target_data

@@ -1,3 +1,4 @@
+# -*- run_rnn.sh -*-
 #!/bin/bash
 
 #SBATCH -p 3gpuq
@@ -12,7 +13,7 @@ source activate dl
 python train_rnn.py \
     --ssp bdl \
     --tsp slt \
-    --data_root /mnt/lustre/sjtu/users/kc430/data/my/vc/cmu_arctic \
+    --data_root  A:\\Projects\\ATSP\\OutputData \
     --epochs 30 \
     --dual True \
 

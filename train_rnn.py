@@ -1,5 +1,7 @@
+# -*- train_rnn.py -*-
 import argparse
 import random
+from numba import jit, cuda
 
 import torch
 import torch.nn as nn
@@ -13,7 +15,7 @@ from model import McepNet, DualMcepNet
 # hyper parameters
 ssp = "clb"
 tsp = "slt"
-data_root = "/mnt/lustre/sjtu/users/kc430/data/my/vc/cmu_arctic/"
+data_root = "/content/drive/MyDrive/ATSP_output"
 scp = "scp/train.scp"
 epochs = 10
 batch_size = 2
@@ -58,7 +60,7 @@ def save_checkpoint(net, optimizer, cpt_name):
         'checkpoints/{}.cpt'.format(cpt_name)
     )
 
-
+@jit(target ="cuda")                        
 def main():
     args = get_args()
     debug_args(args)
@@ -83,10 +85,12 @@ def main():
 
     if use_cuda:
         net, criterion = net.cuda(), criterion.cuda()
-
+    
     for epoch in range(args.epochs):
+        print(epoch, 'started')
         print_loss = {'train': 0., 'dev': 0.}
         for phase in ['train', 'dev']:
+            counter_temp = 0
             for inputs, outputs, lengths in dataloaders[phase]:
                 sorted_lengths, indices = torch.sort(lengths.view(-1), dim=0, descending=True)
                 sorted_lengths = sorted_lengths.long().numpy()
@@ -105,21 +109,29 @@ def main():
                         inv_inputs, inv_outputs = net(outputs, sorted_lengths, h, c, dual=True)
                     loss = criterion(inv_inputs.view(-1, args.in_dim), inputs.view(-1, args.in_dim)) + \
                         criterion(inv_outputs.view(-1, args.out_dim), outputs.view((-1, args.out_dim)))
-                    print_loss[phase] += loss.data[0]
+                    print_loss[phase] += loss.item()
                 else:
                     predicts = net(inputs, sorted_lengths, h, c)
 
                     loss = criterion(predicts.view(-1, args.out_dim), outputs.view(-1, args.in_dim))
-                    print_loss[phase] += loss.data[0]
+                    print_loss[phase] += loss.item()
 
                 if phase == 'train':
+                    print('sending loss backwards', counter_temp)
                     loss.backward()
+                    print('optimizing',counter_temp)
                     optimizer.step()
+                    counter_temp+=1
             print_loss[phase] /= len(dataloaders[phase])
         print('Epoch {:<10} Train Loss: {:<20.4f} Dev Loss: {:<20.4f}'.format(epoch, print_loss['train'], print_loss['dev']))
+        L  = [epoch, print_loss['train'], print_loss['dev']]
+        file1 = open("/data/Speech/NNDL/Voice_conversion/voice-conversion-master/loss.txt","a")
+        file1.writelines("epoch = " + str(epoch) +" ----training loss = "+str(print_loss['train'])+" ----development loss = "+ str(print_loss['dev'])+"\n")
+        file1.close()
         scheduler.step(print_loss['dev'])
     cpt_name = "{}-{}-dual-rnn" if args.dual else "{}-{}-rnn"
     save_checkpoint(net, optimizer, cpt_name.format(args.ssp, args.tsp))
+
 
 
 if __name__ == '__main__':
