@@ -123,7 +123,7 @@ def main():
             print_loss[phase] /= len(dataloaders[phase])
         print('Epoch {:<10} Train Loss: {:<20.4f} Dev Loss: {:<20.4f}'.format(epoch, print_loss['train'], print_loss['dev']))
         L  = [epoch, print_loss['train'], print_loss['dev']]
-        file1 = open("/data/Speech/NNDL/Voice_conversion/voice-conversion-master/loss.txt","a")
+        file1 = open("/loss.txt","a")
         file1.writelines("epoch = " + str(epoch) +" ----training loss = "+str(print_loss['train'])+" ----development loss = "+ str(print_loss['dev'])+"\n")
         file1.close()
         scheduler.step(print_loss['dev'])
