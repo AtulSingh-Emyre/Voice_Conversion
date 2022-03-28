@@ -115,10 +115,10 @@ def main():
                     print_loss[phase] += loss.item()
 
                 if phase == 'train':
-                    print('sending loss backwards', counter_temp)
                     loss.backward()
-                    print('optimizing',counter_temp)
                     optimizer.step()
+                    print('completed id: ',counter_temp)
+                    
                     counter_temp+=1
             print_loss[phase] /= len(dataloaders[phase])
         print('Epoch {:<10} Train Loss: {:<20.4f} Dev Loss: {:<20.4f}'.format(epoch, print_loss['train'], print_loss['dev']))
