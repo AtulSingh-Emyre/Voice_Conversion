@@ -9,14 +9,16 @@ import config
 import librosa
 import numpy as np
 from tqdm import tqdm
+from  scipy.io import wavfile 
+
 
 
 available_speakers = ["awb", "bdl", "clb", "jmk", "ksp", "rms", "slt"]
 ssp = 'bdl'
 tsp = 'slt'
-norm_txt = "/mnt/lustre/sjtu/users/kc430/data/my/vc/cmu_arctic/norm.txt"
-path_template = "/mnt/lustre/sjtu/users/kc430/data/sjtu/tts/voice-conversion/arctic/" \
-                "cmu_us_{0}_arctic/wav/cmu_us_arctic_{0}_{1}.wav"
+norm_txt = "/content/drive/MyDrive/ATSP_output/norm.txt"
+path_template = "/content/drive/MyDrive/ATSP/" \
+                "cmu_us_{0}_arctic/wav/arctic_{1}.wav"
 save_path = "wavs/"
 
 
@@ -99,10 +101,13 @@ def main():
             mc.astype(np.float64), alpha=config.alpha, fftlen=config.fftlen)
         waveform = pyworld.synthesize(
             f0, spectrogram, aperiodicity, config.fs, config.frame_period)
-
         maxv = np.iinfo(np.int16).max
-        librosa.output.write_wav('{0}/{1}_{2}/cmu_us_arctic_{2}_{3}.wav'.format(args.save_path, args.ssp, args.tsp, wav_id),
-                                 (waveform * maxv).astype(np.int16), config.fs)
+        wavfile.write('{0}/{1}_{2}/cmu_us_arctic_{2}_{3}.wav'.format(args.save_path, args.ssp, args.tsp, wav_id), config.fs, 
+          (waveform * maxv).astype(np.int16))
+
+        #maxv = np.iinfo(np.int16).max
+        #librosa.output.write_wav('{0}/{1}_{2}/cmu_us_arctic_{2}_{3}.wav'.format(args.save_path, args.ssp, args.tsp, wav_id),
+        #                         (waveform * maxv), config.fs)
 
 
 if __name__ == '__main__':
